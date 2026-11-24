@@ -1,0 +1,33 @@
+{
+  "name": "E-Modul Interaktif Percabangan KKA Kelas IX SMPN 9 Samarinda",
+  "short_name": "E-Modul KKA",
+  "description": "E-Modul Interaktif Percabangan Mata Pelajaran Koding dan Kecerdasan Artifisial (KKA) Kelas IX SMP Negeri 9 Samarinda. Dapat digunakan secara luring.",
+  "lang": "id",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f8f6f0",
+  "theme_color": "#1c2742",
+  "categories": ["education", "books"],
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

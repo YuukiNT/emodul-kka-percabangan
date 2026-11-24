@@ -1,0 +1,540 @@
+@import "tailwindcss";
+
+@theme {
+  /* Dominan: Buku Kerja Kertas Hangat & Tinta Gelap (85% komposisi layar) */
+  --color-canvas: oklch(97.8% 0.008 90);
+  --color-surface: oklch(99.5% 0.003 90);
+  --color-ink: oklch(21% 0.03 255);
+  --color-ink-muted: oklch(46% 0.02 255);
+  --color-line: oklch(87% 0.012 90);
+  --color-line-strong: oklch(25% 0.03 255);
+
+  /* Aksen Terarah: Hanya untuk aksi utama & semantik logika (15% layar) */
+  --color-cobalt: oklch(54% 0.19 258);       /* Aksi utama, tautan, blok kondisi */
+  --color-cobalt-soft: oklch(94% 0.035 258);
+  --color-emerald: oklch(60% 0.16 155);      /* Jalur True / Benar / Tuntas */
+  --color-emerald-soft: oklch(94% 0.04 155);
+  --color-amber: oklch(74% 0.15 75);         /* Cabang elif / Catatan penting */
+  --color-amber-soft: oklch(95% 0.045 80);
+  --color-coral: oklch(59% 0.20 26);         /* Jalur False / Error Hint */
+  --color-coral-soft: oklch(94% 0.045 26);
+
+  /* Tipografi & Radius */
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+}
+
+@layer base {
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: 0.96875rem; /* 15.5px ramah baca HP & monitor */
+    line-height: 1.7;
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .font-editorial {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+
+  code, pre, kbd, .font-code, .font-mono, .puzzle-block, svg text {
+    font-variant-ligatures: none;
+    font-feature-settings: "liga" 0, "calt" 0;
+  }
+
+  code, pre, kbd, .font-code {
+    font-family: var(--font-mono);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-cobalt);
+    outline-offset: 2px;
+  }
+}
+
+/* =========================================================
+   Editorial Blueprint Workbook — Tipografi & Struktur
+   ========================================================= */
+
+.prose-wb {
+  max-width: 65ch;
+  line-height: 1.74;
+  color: var(--color-ink);
+}
+
+.prose-wb p + p {
+  margin-top: 0.95rem;
+}
+
+.editorial-index {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.chapter-numeral {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  color: var(--color-line);
+  user-select: none;
+}
+
+.wb-rule {
+  border-top: 1px solid var(--color-line);
+}
+
+.wb-rule-strong {
+  border-top: 2px solid var(--color-line-strong);
+}
+
+/* Panel kerja taktil — garis cetak biru tajam, bukan kartu SaaS mengambang */
+.wb-sheet {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+}
+
+.wb-sheet-framed {
+  background-color: var(--color-surface);
+  border: 1.5px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  box-shadow: 3px 3px 0 0 color-mix(in oklch, var(--color-ink) 14%, transparent);
+}
+
+/* Callout Editorial (garis tepi kiri bermakna, tanpa kotak kartu berat) */
+.wb-callout {
+  border-left: 3px solid var(--color-amber);
+  background-color: var(--color-amber-soft);
+  padding: 0.95rem 1.15rem;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.wb-callout-cobalt {
+  border-left: 3px solid var(--color-cobalt);
+  background-color: var(--color-cobalt-soft);
+  padding: 0.95rem 1.15rem;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.wb-callout-emerald {
+  border-left: 3px solid var(--color-emerald);
+  background-color: var(--color-emerald-soft);
+  padding: 0.95rem 1.15rem;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.wb-callout-coral {
+  border-left: 3px solid var(--color-coral);
+  background-color: var(--color-coral-soft);
+  padding: 0.95rem 1.15rem;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* Tombol Aksi Taktil */
+.wb-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--color-cobalt);
+  color: var(--color-surface);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.625rem 1.15rem;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-line-strong);
+  box-shadow: 2px 2px 0 0 var(--color-line-strong);
+  transition: transform 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
+  cursor: pointer;
+}
+
+.wb-btn-primary:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 0 var(--color-line-strong);
+}
+
+.wb-btn-primary:active:not(:disabled) {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 0 var(--color-line-strong);
+}
+
+.wb-btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.wb-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.575rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-line-strong);
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+  cursor: pointer;
+}
+
+.wb-btn-secondary:hover:not(:disabled) {
+  background-color: var(--color-canvas);
+}
+
+.wb-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  background-color: transparent;
+  color: var(--color-ink);
+  font-weight: 500;
+  font-size: 0.875rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  transition: background-color 120ms ease, border-color 120ms ease;
+  cursor: pointer;
+}
+
+.wb-btn-ghost:hover {
+  background-color: color-mix(in oklch, var(--color-line) 40%, transparent);
+  border-color: var(--color-line);
+}
+
+/* Tabel Buku Kerja */
+.wb-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.wb-table th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  padding: 0.7rem 0.85rem;
+  border-bottom: 2px solid var(--color-line-strong);
+  background-color: var(--color-canvas);
+}
+
+.wb-table td {
+  padding: 0.75rem 0.85rem;
+  border-bottom: 1px solid var(--color-line);
+  vertical-align: top;
+}
+
+.wb-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Slider Uji Nilai Kustom */
+input[type="range"].wb-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--color-line);
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"].wb-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-cobalt);
+  border: 2.5px solid var(--color-surface);
+  box-shadow: 0 0 0 1.5px var(--color-line-strong);
+  cursor: pointer;
+  transition: transform 120ms ease;
+}
+
+input[type="range"].wb-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+input[type="range"].wb-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-cobalt);
+  border: 2.5px solid var(--color-surface);
+  box-shadow: 0 0 0 1.5px var(--color-line-strong);
+  cursor: pointer;
+}
+
+/* =========================================================
+   KB 1: Animasi Alur Panah Flowchart SVG
+   ========================================================= */
+@keyframes flowDash {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.fc-flow-active {
+  stroke-dasharray: 7 5;
+  animation: flowDash 0.9s linear infinite;
+}
+
+.fc-node {
+  transition: fill 200ms ease, stroke 200ms ease, opacity 200ms ease;
+}
+
+.fc-dimmed {
+  opacity: 0.38;
+}
+
+/* =========================================================
+   KB 2: Kepingan Blok Puzzle Bergigi (Interlocking Notches)
+   ========================================================= */
+
+.puzzle-block {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  min-height: 48px;
+  padding: 0.65rem 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+  font-weight: 600;
+  border-width: 1.75px;
+  border-style: solid;
+  border-radius: 6px;
+  user-select: none;
+  transition: transform 130ms ease, box-shadow 130ms ease, opacity 130ms ease;
+  cursor: grab;
+  /* Efek kepingan puzzle dengan lekukan pengunci atas & tonjolan bawah */
+  margin-bottom: 6px;
+}
+
+.puzzle-block:active {
+  cursor: grabbing;
+}
+
+/* Lekukan pengunci (notch) di sisi atas */
+.puzzle-block::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: 22px;
+  width: 26px;
+  height: 7px;
+  background-color: var(--puzzle-cutout-bg, var(--color-canvas));
+  border-left: 1.75px solid currentColor;
+  border-right: 1.75px solid currentColor;
+  border-bottom: 1.75px solid currentColor;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  pointer-events: none;
+}
+
+/* Tonjolan pengunci (tab) di sisi bawah */
+.puzzle-block::after {
+  content: "";
+  position: absolute;
+  bottom: -7px;
+  left: 24px;
+  width: 22px;
+  height: 7px;
+  background-color: inherit;
+  border-left: 1.75px solid currentColor;
+  border-right: 1.75px solid currentColor;
+  border-bottom: 1.75px solid currentColor;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Blok header (if) tidak perlu lekukan atas jika menjadi awal struktur, tetap punya pengunci dalam */
+.puzzle-block--indent {
+  margin-left: 1.75rem;
+}
+
+.puzzle-block--indent::before {
+  left: 18px;
+}
+
+.puzzle-block--indent::after {
+  left: 20px;
+}
+
+/* Varian warna semantik OKLCH sesuai @theme */
+.puzzle-block--if {
+  background-color: var(--color-cobalt);
+  color: var(--color-surface);
+  border-color: var(--color-line-strong);
+  box-shadow: 2px 2px 0 0 var(--color-line-strong);
+}
+.puzzle-block--if::before {
+  border-color: var(--color-line-strong);
+}
+.puzzle-block--if::after {
+  border-color: var(--color-line-strong);
+}
+
+.puzzle-block--elif {
+  background-color: var(--color-amber);
+  color: var(--color-ink);
+  border-color: var(--color-line-strong);
+  box-shadow: 2px 2px 0 0 var(--color-line-strong);
+}
+.puzzle-block--elif::before,
+.puzzle-block--elif::after {
+  border-color: var(--color-line-strong);
+}
+
+.puzzle-block--else {
+  background-color: var(--color-coral);
+  color: var(--color-surface);
+  border-color: var(--color-line-strong);
+  box-shadow: 2px 2px 0 0 var(--color-line-strong);
+}
+.puzzle-block--else::before,
+.puzzle-block--else::after {
+  border-color: var(--color-line-strong);
+}
+
+.puzzle-block--action-true {
+  background-color: var(--color-emerald-soft);
+  color: var(--color-ink);
+  border-color: var(--color-emerald);
+  box-shadow: 2px 2px 0 0 color-mix(in oklch, var(--color-emerald) 45%, transparent);
+}
+.puzzle-block--action-true::before,
+.puzzle-block--action-true::after {
+  border-color: var(--color-emerald);
+}
+
+.puzzle-block--action-amber {
+  background-color: var(--color-amber-soft);
+  color: var(--color-ink);
+  border-color: color-mix(in oklch, var(--color-amber) 85%, var(--color-ink));
+  box-shadow: 2px 2px 0 0 color-mix(in oklch, var(--color-amber) 45%, transparent);
+}
+.puzzle-block--action-amber::before,
+.puzzle-block--action-amber::after {
+  border-color: color-mix(in oklch, var(--color-amber) 85%, var(--color-ink));
+}
+
+.puzzle-block--action-false {
+  background-color: var(--color-coral-soft);
+  color: var(--color-ink);
+  border-color: var(--color-coral);
+  box-shadow: 2px 2px 0 0 color-mix(in oklch, var(--color-coral) 45%, transparent);
+}
+.puzzle-block--action-false::before,
+.puzzle-block--action-false::after {
+  border-color: var(--color-coral);
+}
+
+.puzzle-block.is-selected {
+  outline: 2.5px solid var(--color-ink);
+  outline-offset: 3px;
+  transform: translateY(-2px);
+}
+
+.puzzle-block.is-dragging {
+  opacity: 0.45;
+}
+
+/* Slot drop zone untuk penyusunan blok */
+.puzzle-slot {
+  position: relative;
+  min-height: 54px;
+  border: 1.5px dashed var(--color-line);
+  border-radius: 6px;
+  background-color: var(--color-canvas);
+  transition: border-color 140ms ease, background-color 140ms ease;
+  padding: 4px;
+}
+
+.puzzle-slot--indented {
+  margin-left: 1.75rem;
+}
+
+.puzzle-slot--indented::before {
+  content: "";
+  position: absolute;
+  left: -1.15rem;
+  top: -10px;
+  bottom: 4px;
+  width: 3px;
+  background-color: var(--color-line);
+  border-radius: 2px;
+}
+
+.puzzle-slot.is-dragover,
+.puzzle-slot.is-targetable:hover {
+  border-color: var(--color-cobalt);
+  background-color: var(--color-cobalt-soft);
+}
+
+.puzzle-slot .puzzle-block {
+  --puzzle-cutout-bg: var(--color-surface);
+  margin-bottom: 0;
+}
+
+/* Stepper scrollbar ramping untuk layar HP */
+.stepper-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+}
+.stepper-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+.stepper-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 99px;
+}
+
+/* Animasi transisi layar ringan */
+@keyframes screenReveal {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.screen-enter {
+  animation: screenReveal 200ms ease-out;
+}

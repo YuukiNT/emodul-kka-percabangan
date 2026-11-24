@@ -1,0 +1,20 @@
+{
+  "name": "emodul-kka-percabangan",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "E-Modul Interaktif Percabangan Mata Pelajaran Koding dan Kecerdasan Artifisial (KKA) Kelas IX SMP Negeri 9 Samarinda",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 4173"
+  },
+  "devDependencies": {
+    "@fontsource/bricolage-grotesque": "^5.2.5",
+    "@fontsource/jetbrains-mono": "^5.2.5",
+    "@fontsource/plus-jakarta-sans": "^5.2.5",
+    "@tailwindcss/vite": "^4.1.0",
+    "tailwindcss": "^4.1.0",
+    "vite": "^6.3.0"
+  }
+}
