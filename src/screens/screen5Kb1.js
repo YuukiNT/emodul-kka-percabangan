@@ -1,5 +1,9 @@
 /**
  * screen5Kb1.js - Layar 5: KB 1 (Konsep Dasar Logika Keputusan & Flowchart)
+ * Mengikuti pola Bartosz Ciechanowski & Brilliant.org:
+ * 1) Interactive Hook 10 detik di awal bab (sebelum definisi & tabel)
+ * 2) Narasi terbuka di atas kanvas kertas hangat (tanpa tumpukan kotak berlapis)
+ * 3) Checkpoint Tebak Cepat sebaris + Laboratorium Flowchart 60fps + Kuis Bertahap 1-per-1
  */
 
 import {
@@ -15,22 +19,47 @@ import { icon } from '../components/icons.js';
 
 export function renderScreen5Kb1(container, { navigate, openGlossary, openNotes, showToast }) {
   const { kb1 } = getState();
+  let hookBattery = 16;
+
+  function updateBatteryHook() {
+    const isLow = hookBattery < 20;
+    const valLabel = container.querySelector('#kb1-hook-val');
+    const exprResult = container.querySelector('#kb1-hook-bool');
+    const phoneStatus = container.querySelector('#kb1-hook-status');
+    const barFill = container.querySelector('#kb1-hook-bar');
+
+    if (valLabel) valLabel.textContent = `${hookBattery}%`;
+    if (barFill) {
+      barFill.style.width = `${hookBattery}%`;
+      barFill.className = `h-full rounded-xs transition-all duration-150 ${
+        isLow ? 'bg-coral' : hookBattery < 45 ? 'bg-amber' : 'bg-emerald'
+      }`;
+    }
+    if (exprResult) {
+      exprResult.textContent = isLow ? 'True (Benar)' : 'False (Salah)';
+      exprResult.className = `font-mono text-xs font-bold px-2.5 py-1 rounded border ${
+        isLow ? 'border-emerald bg-emerald-soft text-ink' : 'border-coral bg-coral-soft text-ink'
+      }`;
+    }
+    if (phoneStatus) {
+      phoneStatus.className = `mt-3 p-3 rounded-md border text-sm font-medium transition-colors ${
+        isLow
+          ? 'border-amber bg-amber-soft text-ink'
+          : 'border-line bg-canvas text-ink-muted'
+      }`;
+      phoneStatus.innerHTML = isLow
+        ? `<strong class="text-ink block">Notifikasi Muncul: "Baterai lemah! Segera colok charger."</strong><span class="text-xs">Karena ${hookBattery} &lt; 20 bernilai <strong>True</strong>, HP menjalankan perintah peringatan.</span>`
+        : `<strong class="text-ink block">Layar Normal (Tidak Ada Peringatan)</strong><span class="text-xs">Karena ${hookBattery} &lt; 20 bernilai <strong>False</strong>, perintah peringatan dilewati.</span>`;
+    }
+  }
 
   container.innerHTML = `
     <article class="screen-enter space-y-12 pb-12">
-      <header class="pb-6 border-b-2 border-line-strong space-y-3">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <div class="flex items-center gap-3.5">
-            <span class="chapter-numeral text-5xl sm:text-6xl">05</span>
-            <div class="border-l-2 border-line-strong pl-3.5">
-              <p class="editorial-index">Kegiatan Belajar 1 · 35 Menit</p>
-              <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-ink mt-0.5">
-                Konsep Dasar Logika Keputusan &amp; Flowchart
-              </h1>
-            </div>
-          </div>
-
-          <div class="flex items-center gap-2">
+      <!-- Pembuka Bab (Satu Kicker Editorial Saja) -->
+      <header class="pb-6 border-b border-line space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <p class="editorial-index">Kegiatan Belajar 1 · Estimasi 35 Menit</p>
+          <div class="flex items-center gap-1.5">
             <button type="button" id="kb1-open-glossary" class="wb-btn-ghost text-xs border border-line">
               ${icon('book', 14, 'text-cobalt')}
               <span>Kamus</span>
@@ -42,48 +71,74 @@ export function renderScreen5Kb1(container, { navigate, openGlossary, openNotes,
           </div>
         </div>
 
-        <p class="prose-wb text-sm sm:text-[15.5px] text-ink-muted">
-          Sebelum menulis baris kode di komputer, kita perlu melatih cara berpikir logis terlebih dahulu. Di bab ini kamu akan memahami bagaimana komputer mengambil keputusan memakai nilai <strong>Benar (True)</strong> dan <strong>Salah (False)</strong>, membaca simbol diagram alir (<em>flowchart</em>), serta mengujinya langsung lewat simulasi.
+        <div class="flex items-baseline gap-3.5">
+          <span class="chapter-numeral text-4xl sm:text-5xl">05</span>
+          <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-ink">
+            Konsep Dasar Logika Keputusan &amp; Flowchart
+          </h1>
+        </div>
+
+        <p class="prose-wb text-ink-muted text-base">
+          Bagaimana ponsel tahu kapan harus memunculkan peringatan baterai lemah, atau bagaimana komputer menentukan siswa lulus KKM? Sebelum membaca rumusnya, coba gerakkan simulasi kecil di bawah ini.
         </p>
       </header>
 
-      <!-- Subbab 5.1 -->
-      <section class="space-y-4">
-        <div>
-          <p class="editorial-index">Subbab 5.1 · Dasar Logika</p>
-          <h2 class="font-display font-bold text-xl sm:text-2xl text-ink mt-0.5">
-            Apa Itu Kondisi Logis (Benar / Salah)?
+      <!-- PEMICU INTERAKTIF 10 DETIK (Demo First sebelum Definisi) -->
+      <section class="wb-stage p-5 sm:p-6 space-y-4" aria-label="Eksperimen pembuka baterai ponsel">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h2 class="font-display font-bold text-base sm:text-lg text-ink">
+            Sentuh Dulu: Kapan Peringatan Baterai HP Muncul?
           </h2>
+          <span class="font-mono text-xs text-ink-muted">Geser di bawah &amp; di atas 20%</span>
         </div>
 
-        <div class="prose-wb text-[15.5px] space-y-3.5">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
+          <div class="md:col-span-6 space-y-2">
+            <div class="flex items-center justify-between text-sm">
+              <label for="kb1-hook-slider" class="font-semibold text-ink">Sisa Baterai HP (<code class="font-mono text-cobalt">baterai</code>)</label>
+              <div class="flex items-center gap-2">
+                <div class="w-12 h-5 p-0.5 rounded border-[1.5px] border-ink flex items-center bg-surface">
+                  <div id="kb1-hook-bar" class="h-full rounded-xs bg-coral" style="width: 16%"></div>
+                </div>
+                <span id="kb1-hook-val" class="font-mono tabular-nums font-bold text-ink w-10 text-right">16%</span>
+              </div>
+            </div>
+            <input id="kb1-hook-slider" type="range" min="3" max="100" value="${hookBattery}" class="wb-slider" />
+          </div>
+
+          <div class="md:col-span-6">
+            <div class="flex items-center justify-between gap-2 text-xs font-mono">
+              <span class="text-ink-muted">Syarat diuji: <code class="text-ink font-semibold">baterai &lt; 20</code></span>
+              <span id="kb1-hook-bool"></span>
+            </div>
+            <div id="kb1-hook-status"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5.1 Kondisi Logis & Boolean (Mengalir Terbuka di Atas Kanvas Kertas) -->
+      <section class="space-y-5">
+        <h2 class="font-display font-bold text-xl sm:text-2xl text-ink">
+          <span class="section-num">5.1</span>Apa Itu Kondisi Logis (<button type="button" data-glossary-term="Boolean" class="text-cobalt underline decoration-dotted underline-offset-4 cursor-pointer">Boolean</button>)?
+        </h2>
+
+        <div class="prose-wb space-y-3.5">
           <p>
-            Setiap hari tanpa sadar kita selalu membuat keputusan. Sebelum berangkat ke SMP Negeri 9 Samarinda, kamu melihat langit: <em>"Apakah di luar sedang hujan?"</em> Jika <strong>Ya</strong>, kamu memakai jas hujan. Jika <strong>Tidak</strong>, kamu langsung berangkat. Saat hendak membeli makanan di kantin, kamu mengecek saku: <em>"Apakah uang jajanku cukup minimal Rp10.000?"</em>
+            Baru saja tanganmu menguji sebuah <strong>kondisi logis</strong>. Saat angka baterai berada di <strong>16%</strong>, pernyataan <code class="font-mono text-sm bg-surface px-1.5 py-0.5 rounded border border-line">baterai &lt; 20</code> bernilai <strong>Benar (True)</strong>. Begitu kamu menggesernya ke <strong>50%</strong>, pernyataan yang sama langsung berubah menjadi <strong>Salah (False)</strong>.
           </p>
           <p>
-            Di dalam ilmu komputer, pertanyaan syarat semacam itu disebut <strong>kondisi logis</strong>. Berbeda dengan manusia yang kadang menjawab "mungkin" atau "lumayan", komputer hanya mengenal tepat <strong>dua nilai kebenaran</strong> yang disebut nilai <button type="button" data-glossary-term="Boolean" class="text-cobalt font-semibold underline decoration-dotted underline-offset-4 cursor-pointer">Boolean</button>:
+            Berbeda dengan manusia yang bisa menjawab <em>"agak habis"</em> atau <em>"lumayan bagus"</em>, komputer hanya menerima syarat yang tegas dan hanya mengenal dua nilai kebenaran yang disebut <strong>Boolean</strong>: <strong class="text-emerald">True</strong> (syarat terpenuhi) atau <strong class="text-coral">False</strong> (syarat tidak terpenuhi).
           </p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
-          <div class="wb-callout-emerald">
-            <p class="font-mono text-xs font-bold uppercase tracking-wider text-ink">1. Benar (True)</p>
-            <p class="text-sm text-ink mt-1">Kondisi terpenuhi. Program menjalankan langkah pada cabang <strong>YA</strong>.</p>
-          </div>
-          <div class="wb-callout-coral">
-            <p class="font-mono text-xs font-bold uppercase tracking-wider text-ink">2. Salah (False)</p>
-            <p class="text-sm text-ink mt-1">Kondisi tidak terpenuhi. Program beralih ke cabang <strong>TIDAK</strong>.</p>
-          </div>
-        </div>
-
-        <div class="wb-sheet overflow-x-auto">
-          <table class="wb-table min-w-[560px]">
+        <div class="overflow-x-auto pt-1">
+          <table class="wb-table min-w-[540px]">
             <thead>
               <tr>
-                <th>Situasi Keseharian</th>
+                <th>Situasi Harian Siswa</th>
                 <th>Pertanyaan Kondisi</th>
-                <th>Jika Benar (True)</th>
-                <th>Jika Salah (False)</th>
+                <th>Jalur Benar (True)</th>
+                <th>Jalur Salah (False)</th>
               </tr>
             </thead>
             <tbody>
@@ -91,7 +146,7 @@ export function renderScreen5Kb1(container, { navigate, openGlossary, openNotes,
                 (ex) => `
                 <tr>
                   <td class="font-semibold text-ink">${ex.context}</td>
-                  <td><code class="font-mono text-xs bg-cobalt-soft text-cobalt px-2 py-0.5 rounded">${ex.condition}</code></td>
+                  <td><code class="font-mono text-xs bg-surface text-cobalt px-2 py-0.5 rounded border border-line">${ex.condition}</code></td>
                   <td class="text-sm text-ink"><span class="inline-block w-2 h-2 rounded-full bg-emerald mr-1.5"></span>${ex.trueAction}</td>
                   <td class="text-sm text-ink-muted"><span class="inline-block w-2 h-2 rounded-full bg-coral mr-1.5"></span>${ex.falseAction}</td>
                 </tr>
@@ -101,37 +156,30 @@ export function renderScreen5Kb1(container, { navigate, openGlossary, openNotes,
           </table>
         </div>
 
-        <aside class="wb-callout max-w-3xl">
-          <p class="font-display font-bold text-sm text-ink flex items-center gap-1.5">
-            ${icon('info', 16, 'text-ink')}
-            <span>Catatan Penting</span>
-          </p>
-          <p class="text-sm text-ink mt-1 leading-relaxed">
-            Kalimat seperti <em>"Nilai yang bagus"</em> atau <em>"Baterai agak habis"</em> belum bisa dipahami komputer karena batas angkanya tidak jelas. Ubahlah selalu menjadi syarat angka yang tegas, misalnya <code class="font-mono bg-surface px-1.5 py-0.5 rounded border border-line">nilai &gt;= 75</code> atau <code class="font-mono bg-surface px-1.5 py-0.5 rounded border border-line">baterai &lt; 20</code>.
+        <aside class="wb-callout max-w-2xl">
+          <p class="text-sm text-ink leading-relaxed">
+            <strong>Tips merumuskan syarat:</strong> Hindari kata sifat yang kabur seperti <em>"nilai bagus"</em>. Ubah selalu menjadi perbandingan angka yang pasti seperti <code class="font-mono bg-surface px-1.5 py-0.5 rounded border border-line">nilai &gt;= 75</code>.
           </p>
         </aside>
       </section>
 
-      <!-- Subbab 5.2 -->
-      <section class="space-y-4 pt-6 wb-rule">
-        <div>
-          <p class="editorial-index">Subbab 5.2 · Diagram Alir</p>
-          <h2 class="font-display font-bold text-xl sm:text-2xl text-ink mt-0.5">
-            5 Simbol Dasar Diagram Alir (Flowchart)
-          </h2>
-        </div>
+      <!-- 5.2 Lima Simbol Dasar Flowchart -->
+      <section class="space-y-5 pt-8 wb-rule">
+        <h2 class="font-display font-bold text-xl sm:text-2xl text-ink">
+          <span class="section-num">5.2</span>Lima Simbol Dasar Diagram Alir (Flowchart)
+        </h2>
 
-        <p class="prose-wb text-[15.5px]">
-          <strong>Flowchart</strong> (diagram alir) adalah peta bergambar yang menunjukkan urutan kerja sebuah program dari awal hingga akhir. Setiap bentuk punya fungsi khusus agar siapa pun yang membacanya langsung mengerti alur keputusannya.
+        <p class="prose-wb">
+          Sebelum diketik menjadi kode, alur keputusan biasanya digambar lebih dulu dalam bentuk <strong>flowchart</strong> (diagram alir). Lima simbol standar berikut adalah bahasa peta yang disepakati pemrogram di seluruh dunia:
         </p>
 
-        <div class="wb-sheet overflow-x-auto">
-          <table class="wb-table min-w-[600px]">
+        <div class="overflow-x-auto">
+          <table class="wb-table min-w-[580px]">
             <thead>
               <tr>
-                <th class="w-32">Bentuk Simbol</th>
-                <th class="w-48">Nama &amp; Peran</th>
-                <th>Penjelasan &amp; Contoh Penggunaan</th>
+                <th class="w-32">Simbol</th>
+                <th class="w-48">Nama &amp; Fungsi</th>
+                <th>Keterangan &amp; Contoh Isi</th>
               </tr>
             </thead>
             <tbody>
@@ -145,7 +193,7 @@ export function renderScreen5Kb1(container, { navigate, openGlossary, openNotes,
                   </td>
                   <td>
                     <p class="text-sm text-ink leading-relaxed">${sym.desc}</p>
-                    <p class="font-mono text-xs text-ink-muted mt-1">Contoh isi: <code class="bg-canvas px-1.5 py-0.5 rounded border border-line text-ink">${sym.example}</code></p>
+                    <p class="font-mono text-xs text-ink-muted mt-1">Contoh: <code class="bg-surface px-1.5 py-0.5 rounded border border-line text-ink">${sym.example}</code></p>
                   </td>
                 </tr>
               `
@@ -155,27 +203,24 @@ export function renderScreen5Kb1(container, { navigate, openGlossary, openNotes,
         </div>
       </section>
 
-      <!-- Subbab 5.3 -->
-      <section class="space-y-4 pt-6 wb-rule">
-        <div>
-          <p class="editorial-index">Subbab 5.3 · Operator Logika</p>
-          <h2 class="font-display font-bold text-xl sm:text-2xl text-ink mt-0.5">
-            Tabel 6 Operator Perbandingan
-          </h2>
-        </div>
+      <!-- 5.3 Enam Operator Perbandingan + Checkpoint Tebak Cepat -->
+      <section class="space-y-5 pt-8 wb-rule">
+        <h2 class="font-display font-bold text-xl sm:text-2xl text-ink">
+          <span class="section-num">5.3</span>Enam Operator Perbandingan
+        </h2>
 
-        <p class="prose-wb text-[15.5px]">
-          Di dalam simbol <strong>Belah Ketupat</strong>, kita membandingkan dua data memakai enam <strong>operator perbandingan</strong> standar berikut. Cermati contoh angka konkretnya, terutama perbedaan antara <code class="font-mono font-semibold text-cobalt">&gt;</code> dan <code class="font-mono font-semibold text-cobalt">&gt;=</code>.
+        <p class="prose-wb">
+          Di dalam simbol <strong>Belah Ketupat</strong>, kita memakai enam tanda perbandingan di bawah ini. Perhatikan baik-baik bedanya <code class="font-mono font-semibold text-cobalt">&gt;</code> dengan <code class="font-mono font-semibold text-cobalt">&gt;=</code>, serta <code class="font-mono font-semibold text-cobalt">==</code> dengan satu tanda <code class="font-mono font-semibold text-ink">=</code>.
         </p>
 
-        <div class="wb-sheet overflow-x-auto">
-          <table class="wb-table min-w-[620px]">
+        <div class="overflow-x-auto">
+          <table class="wb-table min-w-[600px]">
             <thead>
               <tr>
                 <th class="w-24">Operator</th>
                 <th class="w-48">Arti</th>
-                <th>Contoh Pengujian</th>
-                <th class="w-28">Hasil</th>
+                <th>Contoh Uji</th>
+                <th class="w-24">Hasil</th>
               </tr>
             </thead>
             <tbody>
@@ -183,18 +228,18 @@ export function renderScreen5Kb1(container, { navigate, openGlossary, openNotes,
                 (op) => `
                 <tr>
                   <td>
-                    <code class="font-mono text-base font-bold px-2.5 py-1 rounded bg-cobalt-soft text-cobalt border border-cobalt/40 inline-block">${op.symbol}</code>
+                    <code class="font-mono text-sm font-bold px-2.5 py-1 rounded bg-surface text-cobalt border border-line-strong inline-block">${op.symbol}</code>
                   </td>
                   <td>
                     <p class="font-semibold text-sm text-ink">${op.name}</p>
                     <p class="text-xs text-ink-muted mt-0.5">${op.meaning}</p>
                   </td>
                   <td>
-                    <code class="font-mono text-xs text-ink bg-canvas px-2 py-1 rounded border border-line inline-block">${op.example}</code>
+                    <code class="font-mono text-xs text-ink bg-surface px-2 py-0.5 rounded border border-line inline-block">${op.example}</code>
                     <p class="text-xs text-ink-muted mt-1">${op.note}</p>
                   </td>
                   <td class="align-middle">
-                    <span class="font-mono text-xs font-bold px-2.5 py-1 rounded border ${
+                    <span class="font-mono text-xs font-bold px-2.5 py-0.5 rounded border ${
                       op.result
                         ? 'border-emerald bg-emerald-soft text-ink'
                         : 'border-coral bg-coral-soft text-ink'
@@ -209,127 +254,124 @@ export function renderScreen5Kb1(container, { navigate, openGlossary, openNotes,
           </table>
         </div>
 
-        <aside class="wb-callout-coral max-w-3xl">
-          <p class="font-display font-bold text-sm text-ink flex items-center gap-1.5">
-            ${icon('alert', 16, 'text-coral')}
-            <span>Perhatikan Perbedaan Tanda "=" dan "=="</span>
+        <!-- Micro-Checkpoint 1 Klik (Active Recall di Tengah Bacaan) -->
+        <div class="wb-callout-cobalt max-w-2xl space-y-2.5" id="kb1-quick-check">
+          <p class="text-sm font-semibold text-ink">
+            Uji Cepat 5 Detik: Raka mendapat nilai ulangan pas <code class="font-mono font-bold">75</code>. Jika komputer memeriksa syarat <code class="font-mono font-bold bg-surface px-1.5 py-0.5 rounded border border-line">nilai == 75</code>, apa hasilnya?
           </p>
-          <p class="text-sm text-ink mt-1 leading-relaxed">
-            Satu tanda sama dengan (<code class="font-mono font-bold">=</code>) berarti <strong>menyimpan nilai</strong>, misalnya <code class="font-mono">nilai = 80</code> (memasukkan angka 80 ke variabel nilai). Sedangkan dua tanda sama dengan (<code class="font-mono font-bold">==</code>) berarti <strong>membandingkan apakah sama</strong>, misalnya <code class="font-mono">nilai == 80</code>.
-          </p>
-        </aside>
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" data-quick-ans="true" class="min-h-[38px] px-3.5 py-1.5 rounded border border-line-strong bg-surface hover:bg-emerald-soft text-xs font-mono font-bold text-ink cursor-pointer">
+              True (Benar)
+            </button>
+            <button type="button" data-quick-ans="false" class="min-h-[38px] px-3.5 py-1.5 rounded border border-line-strong bg-surface hover:bg-coral-soft text-xs font-mono font-bold text-ink cursor-pointer">
+              False (Salah)
+            </button>
+          </div>
+          <p id="kb1-quick-feedback" class="text-xs text-ink hidden"></p>
+        </div>
       </section>
 
-      <!-- Subbab 5.4 -->
-      <section class="space-y-4 pt-6 wb-rule">
-        <div>
-          <p class="editorial-index">Subbab 5.4 · Bentuk Alur</p>
-          <h2 class="font-display font-bold text-xl sm:text-2xl text-ink mt-0.5">
-            Keputusan Tunggal vs Keputusan Majemuk (Bertingkat)
-          </h2>
-        </div>
+      <!-- 5.4 Keputusan Tunggal vs Majemuk (2 Kolom Terbuka Tanpa Kotak Berat) -->
+      <section class="space-y-4 pt-8 wb-rule">
+        <h2 class="font-display font-bold text-xl sm:text-2xl text-ink">
+          <span class="section-num">5.4</span>Keputusan Tunggal vs Keputusan Majemuk
+        </h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="wb-sheet p-5 space-y-2.5 border-t-4 border-t-cobalt">
-            <span class="font-mono text-xs font-bold uppercase text-cobalt">1. Keputusan Tunggal</span>
-            <h3 class="font-display font-bold text-lg text-ink">Satu Belah Ketupat (2 Jalur)</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-1">
+          <div class="border-l-2 border-cobalt pl-4 space-y-2">
+            <h3 class="font-display font-bold text-lg text-ink">Keputusan Tunggal (2 Jalur)</h3>
             <p class="text-sm text-ink-muted leading-relaxed">
-              Hanya menguji satu pertanyaan syarat. Cocok untuk persoalan dengan dua pilihan akhir, misalnya status <strong>Lulus KKM</strong> (<code class="font-mono text-ink">nilai &gt;= 75</code>) atau <strong>Perlu Remedial</strong>.
+              Hanya memakai <strong>satu belah ketupat</strong>. Dipakai saat pilihannya cuma dua kemungkinan berlawanan, contohnya <strong>Lulus KKM</strong> (<code class="font-mono text-ink">nilai &gt;= 75</code>) atau <strong>Perlu Remedial</strong>.
             </p>
-            <p class="font-mono text-xs bg-canvas p-2.5 rounded border border-line text-ink">
-              nilai &gt;= 75 ?  →  [YA: Lulus]  |  [TIDAK: Remedial]
-            </p>
+            <p class="font-mono text-xs text-ink pt-1">nilai &gt;= 75 ? → [YA: Lulus] / [TIDAK: Remedial]</p>
           </div>
 
-          <div class="wb-sheet p-5 space-y-2.5 border-t-4 border-t-amber">
-            <span class="font-mono text-xs font-bold uppercase text-ink">2. Keputusan Majemuk (Bertingkat)</span>
-            <h3 class="font-display font-bold text-lg text-ink">Lebih dari Satu Belah Ketupat (3+ Jalur)</h3>
+          <div class="border-l-2 border-amber pl-4 space-y-2">
+            <h3 class="font-display font-bold text-lg text-ink">Keputusan Majemuk (3 Jalur atau Lebih)</h3>
             <p class="text-sm text-ink-muted leading-relaxed">
-              Ketika kemungkinan hasil lebih dari dua (misalnya <strong>Predikat A, B, dan C</strong>), jalur TIDAK dari belah ketupat pertama dihubungkan ke belah ketupat kedua untuk menguji syarat berikutnya.
+              Memakai <strong>lebih dari satu belah ketupat</strong> secara bertingkat. Saat syarat pertama bernilai <em>False</em>, panah TIDAK akan mengarah ke belah ketupat kedua (misalnya membagi Predikat A, B, dan C).
             </p>
-            <p class="font-mono text-xs bg-canvas p-2.5 rounded border border-line text-ink">
-              &gt;= 90 ? → [A] | TIDAK → &gt;= 75 ? → [B] | TIDAK → [C]
-            </p>
+            <p class="font-mono text-xs text-ink pt-1">&gt;= 90 ? → [A] | TIDAK → &gt;= 75 ? → [B] | TIDAK → [C]</p>
           </div>
         </div>
       </section>
 
-      <!-- Subbab 5.5: Simulasi -->
-      <section class="space-y-3 pt-6 wb-rule" id="kb1-sim-section">
+      <!-- 5.5 Panggung Utama: Simulasi Flowchart Interaktif -->
+      <section class="space-y-3 pt-8 wb-rule" id="kb1-sim-section">
         <div class="prose-wb">
-          <p class="editorial-index">Praktik Langsung</p>
-          <h2 class="font-display font-bold text-xl sm:text-2xl text-ink mt-0.5">
-            Coba Sendiri: Simulasi Flowchart Interaktif
+          <h2 class="font-display font-bold text-xl sm:text-2xl text-ink">
+            <span class="section-num">5.5</span>Praktik: Uji Sendiri Alur Flowchart
           </h2>
           <p class="text-sm text-ink-muted mt-1">
-            Pilih salah satu skenario di bawah ini, geser nilai uji (coba angka batas seperti <code class="font-mono text-ink">74</code>, <code class="font-mono text-ink">75</code>, dan <code class="font-mono text-ink">90</code>), lalu amati panah jalur warna mana yang menyala.
+            Bandingkan Skenario 1 (tunggal) dan Skenario 2/3 (majemuk). Coba geser tepat di angka batas seperti <code class="font-mono text-ink">74</code>, <code class="font-mono text-ink">75</code>, dan <code class="font-mono text-ink">90</code>.
           </p>
         </div>
 
         <div id="kb1-flowchart-sim-mount"></div>
       </section>
 
-      <!-- Rangkuman -->
-      <section class="space-y-4 pt-6 wb-rule">
-        <div>
-          <p class="editorial-index">Intisari Bab</p>
-          <h2 class="font-display font-bold text-xl text-ink mt-0.5">Rangkuman Visual KB 1</h2>
-        </div>
-
-        <div class="wb-sheet p-5 bg-canvas space-y-4">
-          <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 font-mono text-xs">
-            <span class="px-3 py-1.5 rounded-full bg-surface border border-line-strong font-semibold">1. Input Data</span>
-            <span class="text-ink-muted">${icon('arrowRight', 15)}</span>
-            <span class="px-3 py-1.5 rounded bg-cobalt-soft border border-cobalt text-cobalt font-bold">2. Uji Kondisi (==, &gt;=, &lt;)</span>
-            <span class="text-ink-muted">${icon('arrowRight', 15)}</span>
-            <span class="px-3 py-1.5 rounded bg-emerald-soft border border-emerald font-semibold">YA (True)</span>
-            <span class="text-ink-muted">/</span>
-            <span class="px-3 py-1.5 rounded bg-coral-soft border border-coral font-semibold">TIDAK (False)</span>
-            <span class="text-ink-muted">${icon('arrowRight', 15)}</span>
-            <span class="px-3 py-1.5 rounded-full bg-surface border border-line-strong font-semibold">3. Output</span>
-          </div>
-
-          <ul class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-3 border-t border-line text-sm">
-            <li>
-              <strong class="font-display text-ink block">Nilai Boolean Tegas</strong>
-              <span class="text-ink-muted text-xs leading-relaxed">Setiap syarat keputusan pasti menghasilkan tepat satu nilai: <code class="font-mono text-ink">True</code> atau <code class="font-mono text-ink">False</code>.</span>
-            </li>
-            <li>
-              <strong class="font-display text-ink block">Belah Ketupat = Keputusan</strong>
-              <span class="text-ink-muted text-xs leading-relaxed">Selalu punya 1 panah masuk dan 2 panah keluar (YA &amp; TIDAK) menuju langkah selanjutnya.</span>
-            </li>
-            <li>
-              <strong class="font-display text-ink block">Teliti di Nilai Batas</strong>
-              <span class="text-ink-muted text-xs leading-relaxed">Gunakan <code class="font-mono text-ink">&gt;=</code> jika angka batas ikut lulus (75 &gt;= 75 adalah True), dan <code class="font-mono text-ink">==</code> untuk membandingkan kesamaan.</span>
-            </li>
-          </ul>
-        </div>
+      <!-- Intisari Singkat (Terbuka & Ringkas) -->
+      <section class="space-y-3 pt-8 wb-rule">
+        <h2 class="font-display font-bold text-lg text-ink">Intisari KB 1 sebelum Kuis</h2>
+        <ul class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-ink-muted pt-1">
+          <li class="border-t border-line pt-3">
+            <strong class="text-ink block mb-0.5">Boolean Tegas</strong>
+            Setiap kondisi hanya menghasilkan <code class="font-mono text-ink">True</code> atau <code class="font-mono text-ink">False</code>.
+          </li>
+          <li class="border-t border-line pt-3">
+            <strong class="text-ink block mb-0.5">Belah Ketupat</strong>
+            Simbol penguji syarat yang selalu bercabang ke panah YA dan TIDAK.
+          </li>
+          <li class="border-t border-line pt-3">
+            <strong class="text-ink block mb-0.5">Operator == vs =</strong>
+            Gunakan <code class="font-mono text-ink">==</code> untuk membandingkan kesamaan, dan <code class="font-mono text-ink">&gt;=</code> bila nilai batas ikut dihitung lulus.
+          </li>
+        </ul>
       </section>
 
-      <!-- Kuis Formatif KB 1 -->
-      <section class="space-y-3 pt-6 wb-rule" id="kb1-quiz-section">
+      <!-- 5.6 Kuis Formatif Bertahap (1 Soal per Tampilan) -->
+      <section class="pt-6 wb-rule" id="kb1-quiz-section">
         <div id="kb1-quiz-mount"></div>
       </section>
 
       <nav class="pt-6 border-t border-line flex flex-wrap items-center justify-between gap-3">
         <button type="button" id="s5-prev" class="wb-btn-secondary">
           ${icon('arrowLeft', 16)}
-          <span>Kembali: Daftar Isi</span>
+          <span>Daftar Isi</span>
         </button>
         <button type="button" id="s5-next" class="wb-btn-primary">
-          <span>Lanjut ke KB 2: Percabangan Blok Visual</span>
+          <span>Lanjut ke KB 2: Blok Visual</span>
           ${icon('arrowRight', 16)}
         </button>
       </nav>
     </article>
   `;
 
+  updateBatteryHook();
+
+  container.querySelector('#kb1-hook-slider')?.addEventListener('input', (e) => {
+    hookBattery = Number(e.target.value);
+    updateBatteryHook();
+  });
+
+  container.querySelectorAll('[data-quick-ans]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const pickTrue = btn.getAttribute('data-quick-ans') === 'true';
+      const fb = container.querySelector('#kb1-quick-feedback');
+      if (!fb) return;
+      fb.classList.remove('hidden');
+      fb.innerHTML = pickTrue
+        ? `<strong class="text-emerald">Tepat!</strong> Karena 75 persis sama dengan 75, operator <code class="font-mono">==</code> menghasilkan <strong>True</strong>.`
+        : `<strong class="text-coral">Belum tepat.</strong> Operator <code class="font-mono">==</code> mengecek apakah kedua angka sama persis. Karena 75 sama dengan 75, hasilnya <strong>True</strong>.`;
+    });
+  });
+
   mountKb1FlowchartSim(document.getElementById('kb1-flowchart-sim-mount'));
 
   mountFormativeQuiz(document.getElementById('kb1-quiz-mount'), {
     quizId: 'kb1-quiz',
     title: 'Kuis Formatif KB 1: Logika & Flowchart',
-    subtitle: 'Jawab 5 soal berikut untuk mengukur pemahamanmu terhadap materi KB 1.',
+    subtitle: 'Satu soal per langkah. Periksa jawabanmu untuk langsung melihat pembahasannya.',
     questions: KB1_QUIZ,
     savedAnswers: kb1.quizAnswers,
     savedScore: kb1.quizScore,
@@ -339,7 +381,7 @@ export function renderScreen5Kb1(container, { navigate, openGlossary, openNotes,
     },
     onReset: () => {
       resetKb1Quiz();
-      showToast('Kuis KB 1 direset. Silakan coba kembali.');
+      showToast('Kuis KB 1 diulang dari nomor 1.');
     },
   });
 

@@ -38,8 +38,8 @@
 
   body {
     font-family: var(--font-sans);
-    font-size: 0.96875rem; /* 15.5px ramah baca HP & monitor */
-    line-height: 1.7;
+    font-size: 0.985rem;
+    line-height: 1.74;
     background-color: var(--color-canvas);
     color: var(--color-ink);
     overflow-x: hidden;
@@ -47,7 +47,7 @@
 
   h1, h2, h3, .font-editorial {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.022em;
     color: var(--color-ink);
   }
 
@@ -67,24 +67,32 @@
 }
 
 /* =========================================================
-   Editorial Blueprint Workbook — Tipografi & Struktur
+   Angka Tabular Stabil (Anti-Layout-Jitter saat geser slider)
+   ========================================================= */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* =========================================================
+   Editorial Blueprint Workbook: Kanvas Terbuka & Hierarki
    ========================================================= */
 
 .prose-wb {
-  max-width: 65ch;
-  line-height: 1.74;
+  max-width: 64ch;
+  line-height: 1.78;
   color: var(--color-ink);
 }
 
 .prose-wb p + p {
-  margin-top: 0.95rem;
+  margin-top: 1.05rem;
 }
 
+/* Hanya dipakai 1x di pembuka bab (anti eyebrow-spam) */
 .editorial-index {
   font-family: var(--font-mono);
   font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-ink-muted);
 }
@@ -93,9 +101,20 @@
   font-family: var(--font-display);
   font-weight: 800;
   letter-spacing: -0.04em;
-  line-height: 0.9;
-  color: var(--color-line);
+  line-height: 0.88;
+  color: color-mix(in oklch, var(--color-ink) 16%, var(--color-canvas));
   user-select: none;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Penanda nomor subbab bersih bergaya buku cetak (mis: 5.1) */
+.section-num {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-cobalt);
+  font-variant-numeric: tabular-nums;
+  margin-right: 0.45rem;
 }
 
 .wb-rule {
@@ -106,79 +125,89 @@
   border-top: 2px solid var(--color-line-strong);
 }
 
-/* Panel kerja taktil — garis cetak biru tajam, bukan kartu SaaS mengambang */
+/* Kontainer tipis hanya bila benar-benar butuh pemisah permukaan */
 .wb-sheet {
   background-color: var(--color-surface);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-md);
 }
 
-.wb-sheet-framed {
+/* Panggung Interaktif Taktil: khusus untuk alat yang disentuh tangan siswa */
+.wb-sheet-framed,
+.wb-stage {
   background-color: var(--color-surface);
   border: 1.5px solid var(--color-line-strong);
-  border-radius: var(--radius-md);
-  box-shadow: 3px 3px 0 0 color-mix(in oklch, var(--color-ink) 14%, transparent);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 1px 0 0 var(--color-line-strong), 0 8px 24px -14px color-mix(in oklch, var(--color-ink) 18%, transparent);
 }
 
-/* Callout Editorial (garis tepi kiri bermakna, tanpa kotak kartu berat) */
+/* Catatan Tepi (Margin Callout) ringan tanpa kotak berlapis */
 .wb-callout {
   border-left: 3px solid var(--color-amber);
-  background-color: var(--color-amber-soft);
-  padding: 0.95rem 1.15rem;
+  background-color: color-mix(in oklch, var(--color-amber-soft) 72%, var(--color-canvas));
+  padding: 0.9rem 1.15rem;
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 
 .wb-callout-cobalt {
   border-left: 3px solid var(--color-cobalt);
-  background-color: var(--color-cobalt-soft);
-  padding: 0.95rem 1.15rem;
+  background-color: color-mix(in oklch, var(--color-cobalt-soft) 72%, var(--color-canvas));
+  padding: 0.9rem 1.15rem;
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 
 .wb-callout-emerald {
   border-left: 3px solid var(--color-emerald);
-  background-color: var(--color-emerald-soft);
-  padding: 0.95rem 1.15rem;
+  background-color: color-mix(in oklch, var(--color-emerald-soft) 75%, var(--color-canvas));
+  padding: 0.9rem 1.15rem;
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 
 .wb-callout-coral {
   border-left: 3px solid var(--color-coral);
-  background-color: var(--color-coral-soft);
-  padding: 0.95rem 1.15rem;
+  background-color: color-mix(in oklch, var(--color-coral-soft) 75%, var(--color-canvas));
+  padding: 0.9rem 1.15rem;
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 
-/* Tombol Aksi Taktil */
+/* =========================================================
+   Tombol Aksi & Fisika Sentuh (Emil Kowalski Ease-Out Rules)
+   ========================================================= */
+
 .wb-btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  min-height: 44px;
   background-color: var(--color-cobalt);
   color: var(--color-surface);
   font-weight: 600;
   font-size: 0.9rem;
-  padding: 0.625rem 1.15rem;
+  padding: 0.6rem 1.2rem;
   border-radius: var(--radius-md);
   border: 1.5px solid var(--color-line-strong);
-  box-shadow: 2px 2px 0 0 var(--color-line-strong);
-  transition: transform 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
+  box-shadow: 0 2px 0 0 var(--color-line-strong);
+  transition:
+    transform 120ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 120ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 140ms ease;
   cursor: pointer;
 }
 
 .wb-btn-primary:hover:not(:disabled) {
-  transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0 0 var(--color-line-strong);
+  background-color: oklch(50% 0.19 258);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 0 0 var(--color-line-strong);
 }
 
 .wb-btn-primary:active:not(:disabled) {
-  transform: translate(1px, 1px);
-  box-shadow: 1px 1px 0 0 var(--color-line-strong);
+  transform: translateY(1px) scale(0.985);
+  box-shadow: 0 0 0 0 var(--color-line-strong);
 }
 
 .wb-btn-primary:disabled {
-  opacity: 0.55;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
@@ -187,14 +216,18 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  min-height: 44px;
   background-color: var(--color-surface);
   color: var(--color-ink);
   font-weight: 600;
   font-size: 0.875rem;
-  padding: 0.575rem 1rem;
+  padding: 0.55rem 1.05rem;
   border-radius: var(--radius-md);
   border: 1.5px solid var(--color-line-strong);
-  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+  transition:
+    transform 120ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 140ms ease,
+    border-color 140ms ease;
   cursor: pointer;
 }
 
@@ -202,28 +235,37 @@
   background-color: var(--color-canvas);
 }
 
+.wb-btn-secondary:active:not(:disabled) {
+  transform: translateY(1px) scale(0.985);
+}
+
 .wb-btn-ghost {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
+  min-height: 38px;
   background-color: transparent;
   color: var(--color-ink);
   font-weight: 500;
-  font-size: 0.875rem;
-  padding: 0.45rem 0.75rem;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.75rem;
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
-  transition: background-color 120ms ease, border-color 120ms ease;
+  transition: background-color 120ms ease, border-color 120ms ease, transform 100ms ease;
   cursor: pointer;
 }
 
 .wb-btn-ghost:hover {
-  background-color: color-mix(in oklch, var(--color-line) 40%, transparent);
+  background-color: color-mix(in oklch, var(--color-line) 42%, transparent);
   border-color: var(--color-line);
 }
 
-/* Tabel Buku Kerja */
+.wb-btn-ghost:active {
+  transform: scale(0.98);
+}
+
+/* Tabel Editorial Terbuka (tanpa kotak berat di luarnya) */
 .wb-table {
   width: 100%;
   border-collapse: collapse;
@@ -233,32 +275,28 @@
 .wb-table th {
   text-align: left;
   font-family: var(--font-mono);
-  font-size: 0.74rem;
+  font-size: 0.73rem;
   font-weight: 600;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--color-ink-muted);
-  padding: 0.7rem 0.85rem;
-  border-bottom: 2px solid var(--color-line-strong);
-  background-color: var(--color-canvas);
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1.5px solid var(--color-line-strong);
 }
 
 .wb-table td {
-  padding: 0.75rem 0.85rem;
+  padding: 0.8rem 0.85rem;
   border-bottom: 1px solid var(--color-line);
   vertical-align: top;
 }
 
-.wb-table tr:last-child td {
-  border-bottom: none;
-}
-
-/* Slider Uji Nilai Kustom */
+/* Slider Uji Nilai Ramah Sentuh (44px touch track area) */
 input[type="range"].wb-slider {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
   height: 8px;
+  margin-block: 10px;
   border-radius: 999px;
   background: var(--color-line);
   outline: none;
@@ -268,28 +306,33 @@ input[type="range"].wb-slider {
 input[type="range"].wb-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--color-cobalt);
-  border: 2.5px solid var(--color-surface);
-  box-shadow: 0 0 0 1.5px var(--color-line-strong);
-  cursor: pointer;
-  transition: transform 120ms ease;
+  border: 3px solid var(--color-surface);
+  box-shadow: 0 0 0 1.5px var(--color-line-strong), 0 2px 6px rgba(0, 0, 0, 0.15);
+  cursor: grab;
+  transition: transform 120ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 input[type="range"].wb-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.1);
+  transform: scale(1.12);
+}
+
+input[type="range"].wb-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.05);
 }
 
 input[type="range"].wb-slider::-moz-range-thumb {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--color-cobalt);
-  border: 2.5px solid var(--color-surface);
+  border: 3px solid var(--color-surface);
   box-shadow: 0 0 0 1.5px var(--color-line-strong);
-  cursor: pointer;
+  cursor: grab;
 }
 
 /* =========================================================
@@ -306,20 +349,31 @@ input[type="range"].wb-slider::-moz-range-thumb {
 
 .fc-flow-active {
   stroke-dasharray: 7 5;
-  animation: flowDash 0.9s linear infinite;
+  animation: flowDash 0.85s linear infinite;
 }
 
 .fc-node {
-  transition: fill 200ms ease, stroke 200ms ease, opacity 200ms ease;
+  transition: fill 180ms ease, stroke 180ms ease, opacity 180ms ease;
 }
 
 .fc-dimmed {
-  opacity: 0.38;
+  opacity: 0.34;
 }
 
 /* =========================================================
-   KB 2: Kepingan Blok Puzzle Bergigi (Interlocking Notches)
+   KB 2: Kepingan Blok Puzzle Bergigi (Scratch / MakeCode Feel)
    ========================================================= */
+
+@keyframes blockSnap {
+  0% {
+    opacity: 0.7;
+    transform: scale(0.97) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
 
 .puzzle-block {
   position: relative;
@@ -327,23 +381,30 @@ input[type="range"].wb-slider::-moz-range-thumb {
   align-items: center;
   justify-content: space-between;
   gap: 0.65rem;
-  min-height: 48px;
+  min-height: 50px;
   padding: 0.65rem 0.9rem;
   font-family: var(--font-mono);
   font-size: 0.84rem;
   font-weight: 600;
   border-width: 1.75px;
   border-style: solid;
-  border-radius: 6px;
+  border-radius: 7px;
   user-select: none;
-  transition: transform 130ms ease, box-shadow 130ms ease, opacity 130ms ease;
+  transition:
+    transform 130ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 130ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 130ms ease;
   cursor: grab;
-  /* Efek kepingan puzzle dengan lekukan pengunci atas & tonjolan bawah */
   margin-bottom: 6px;
 }
 
 .puzzle-block:active {
   cursor: grabbing;
+  transform: scale(0.99);
+}
+
+.puzzle-block--snapped {
+  animation: blockSnap 170ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Lekukan pengunci (notch) di sisi atas */
@@ -381,7 +442,6 @@ input[type="range"].wb-slider::-moz-range-thumb {
   pointer-events: none;
 }
 
-/* Blok header (if) tidak perlu lekukan atas jika menjadi awal struktur, tetap punya pengunci dalam */
 .puzzle-block--indent {
   margin-left: 1.75rem;
 }
@@ -399,11 +459,9 @@ input[type="range"].wb-slider::-moz-range-thumb {
   background-color: var(--color-cobalt);
   color: var(--color-surface);
   border-color: var(--color-line-strong);
-  box-shadow: 2px 2px 0 0 var(--color-line-strong);
+  box-shadow: 0 2px 0 0 var(--color-line-strong);
 }
-.puzzle-block--if::before {
-  border-color: var(--color-line-strong);
-}
+.puzzle-block--if::before,
 .puzzle-block--if::after {
   border-color: var(--color-line-strong);
 }
@@ -412,7 +470,7 @@ input[type="range"].wb-slider::-moz-range-thumb {
   background-color: var(--color-amber);
   color: var(--color-ink);
   border-color: var(--color-line-strong);
-  box-shadow: 2px 2px 0 0 var(--color-line-strong);
+  box-shadow: 0 2px 0 0 var(--color-line-strong);
 }
 .puzzle-block--elif::before,
 .puzzle-block--elif::after {
@@ -423,7 +481,7 @@ input[type="range"].wb-slider::-moz-range-thumb {
   background-color: var(--color-coral);
   color: var(--color-surface);
   border-color: var(--color-line-strong);
-  box-shadow: 2px 2px 0 0 var(--color-line-strong);
+  box-shadow: 0 2px 0 0 var(--color-line-strong);
 }
 .puzzle-block--else::before,
 .puzzle-block--else::after {
@@ -434,7 +492,7 @@ input[type="range"].wb-slider::-moz-range-thumb {
   background-color: var(--color-emerald-soft);
   color: var(--color-ink);
   border-color: var(--color-emerald);
-  box-shadow: 2px 2px 0 0 color-mix(in oklch, var(--color-emerald) 45%, transparent);
+  box-shadow: 0 2px 0 0 color-mix(in oklch, var(--color-emerald) 45%, transparent);
 }
 .puzzle-block--action-true::before,
 .puzzle-block--action-true::after {
@@ -445,7 +503,7 @@ input[type="range"].wb-slider::-moz-range-thumb {
   background-color: var(--color-amber-soft);
   color: var(--color-ink);
   border-color: color-mix(in oklch, var(--color-amber) 85%, var(--color-ink));
-  box-shadow: 2px 2px 0 0 color-mix(in oklch, var(--color-amber) 45%, transparent);
+  box-shadow: 0 2px 0 0 color-mix(in oklch, var(--color-amber) 45%, transparent);
 }
 .puzzle-block--action-amber::before,
 .puzzle-block--action-amber::after {
@@ -456,7 +514,7 @@ input[type="range"].wb-slider::-moz-range-thumb {
   background-color: var(--color-coral-soft);
   color: var(--color-ink);
   border-color: var(--color-coral);
-  box-shadow: 2px 2px 0 0 color-mix(in oklch, var(--color-coral) 45%, transparent);
+  box-shadow: 0 2px 0 0 color-mix(in oklch, var(--color-coral) 45%, transparent);
 }
 .puzzle-block--action-false::before,
 .puzzle-block--action-false::after {
@@ -469,16 +527,31 @@ input[type="range"].wb-slider::-moz-range-thumb {
   transform: translateY(-2px);
 }
 
+/* Sorotan jejak eksekusi sinkron Blok <-> Kode Python */
+.puzzle-block.is-executing {
+  outline: 2.5px solid var(--color-emerald);
+  outline-offset: 2px;
+}
+
+.puzzle-block.is-dimmed-exec {
+  opacity: 0.48;
+}
+
+.py-line-executing {
+  background-color: var(--color-emerald-soft) !important;
+  box-shadow: inset 3px 0 0 0 var(--color-emerald);
+}
+
 .puzzle-block.is-dragging {
-  opacity: 0.45;
+  opacity: 0.42;
 }
 
 /* Slot drop zone untuk penyusunan blok */
 .puzzle-slot {
   position: relative;
-  min-height: 54px;
+  min-height: 56px;
   border: 1.5px dashed var(--color-line);
-  border-radius: 6px;
+  border-radius: 7px;
   background-color: var(--color-canvas);
   transition: border-color 140ms ease, background-color 140ms ease;
   padding: 4px;
@@ -512,22 +585,17 @@ input[type="range"].wb-slider::-moz-range-thumb {
 
 /* Stepper scrollbar ramping untuk layar HP */
 .stepper-scroll {
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-line) transparent;
+  scrollbar-width: none;
 }
 .stepper-scroll::-webkit-scrollbar {
-  height: 4px;
-}
-.stepper-scroll::-webkit-scrollbar-thumb {
-  background: var(--color-line);
-  border-radius: 99px;
+  display: none;
 }
 
-/* Animasi transisi layar ringan */
+/* Animasi transisi layar & langkah kuis */
 @keyframes screenReveal {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(5px);
   }
   to {
     opacity: 1;
@@ -536,5 +604,58 @@ input[type="range"].wb-slider::-moz-range-thumb {
 }
 
 .screen-enter {
-  animation: screenReveal 200ms ease-out;
+  animation: screenReveal 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes quizStepSlide {
+  from {
+    opacity: 0;
+    transform: translateX(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.quiz-step-enter {
+  animation: quizStepSlide 170ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes flashcardFlip {
+  0% {
+    opacity: 0.55;
+    transform: perspective(900px) rotateX(8deg) scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(900px) rotateX(0deg) scale(1);
+  }
+}
+
+.flashcard-reveal {
+  animation: flashcardFlip 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* Hormati preferensi pengurangan gerak & HP hemat baterai */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Cetak Sertifikat Bersih */
+@media print {
+  header, aside, #stepper-mount, nav, #toast-root {
+    display: none !important;
+  }
+  body, #app, main {
+    background: #ffffff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
 }
